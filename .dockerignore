@@ -1,0 +1,9 @@
+README.md
+config.json
+config.json.gpg
+Dockerfile
+k8s.yml
+Makefile
+.gitignore
+target/
+**/*.rs.bk

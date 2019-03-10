@@ -1,0 +1,78 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  generation: 2
+  name: weather-report
+spec:
+  rules:
+    - host: localhost
+      http:
+        paths:
+          - backend:
+              serviceName: weather-report
+              servicePort: 3000
+            path: /
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: weather-report
+  name: weather-report
+spec:
+  ports:
+    - port: 3000
+      protocol: TCP
+      targetPort: 3000
+  selector:
+    name: weather-report
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: weather-report-tokens
+type: Opaque
+data:
+  yandex: ODAyYjZmMTAtZWE5YS00MTM5LTk2MmYtMTc3YzVmN2RiZDg4
+  openweathermap: ZjQyNzZlM2U2ZDQ4MmMxMzYyNmU0OTcwOWIzZjEyMWI=
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    name: weather-report
+  name: weather-report
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: weather-report
+  strategy:
+  template:
+    metadata:
+      labels:
+        name: weather-report
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: weather-report
+          image: weather_report:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          env:
+            - name: YANDEX_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: weather-report-tokens
+                  key: yandex
+            - name: OPENWEATHERMAP_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: weather-report-tokens
+                  key: openweathermap

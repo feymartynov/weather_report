@@ -1,0 +1,18 @@
+{
+    "server": {
+        "address": "0.0.0.0:3000"
+    },
+    "providers": [
+        {
+            "name": "Yandex",
+            "api_key": "${YANDEX_TOKEN}"
+        },
+        {
+            "name": "OpenWeatherMap",
+            "api_key": "${OPENWEATHERMAP_TOKEN}"
+        }
+    ],
+    "geocoder": {
+        "api_key": "${YANDEX_TOKEN}"
+    }
+}
